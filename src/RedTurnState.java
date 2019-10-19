@@ -2,9 +2,11 @@
 public class RedTurnState implements State {
 	CheckersData checkersData;
 	String redTurnText = "Red's turn";
+
 	
 	public RedTurnState (CheckersData checkersData) {
 		this.checkersData = checkersData;
+		
 	}
 	
 	public void turnFinished() {
@@ -19,5 +21,10 @@ public class RedTurnState implements State {
 	public String getTurnText() {
 		return redTurnText;
 	}
-
+	public int getPlayer() {
+		return CheckersData.RED;
+	}
+	public int getPlayerKing() {
+		return CheckersData.RED_PROMOTED;
+	}
 }

@@ -2,6 +2,7 @@
 public class BlackTurnState implements State {
 	CheckersData checkersData;
 	String blackTurnText = "Black's turn";
+
 	
 	public BlackTurnState (CheckersData checkersData) {
 		this.checkersData = checkersData;
@@ -18,5 +19,10 @@ public class BlackTurnState implements State {
 	public String getTurnText() {
 		return blackTurnText;
 	}
-
+	public int getPlayer() {
+		return CheckersData.BLACK;
+	}
+	public int getPlayerKing() {
+		return CheckersData.BLACK_PROMOTED;
+	}
 }

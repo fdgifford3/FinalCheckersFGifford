@@ -6,20 +6,13 @@ public class MoveLegality {
 	
 	public Move[] getLegalMoves(State state) {
 
-        if (board.state.equals(board.gameOverState))
+        if (state.equals(board.gameOverState))
             return null;
         
         //make the algorithm color neutral
-        int player;
-        int playerKing;
-        if (board.state.equals(board.redTurnState)) {
-        	player = CheckersData.RED;
-        	playerKing = CheckersData.RED_PROMOTED;
-        }
-        else {
-        	player = CheckersData.BLACK;
-            playerKing = CheckersData.BLACK_PROMOTED;
-        }
+        int player = state.getPlayer();
+        int playerKing= state.getPlayerKing();
+        
 
         ArrayList<Move> moves = new ArrayList<Move>(); 
 
@@ -44,30 +37,92 @@ public class MoveLegality {
             for (int row = 0; row < 8; row++) {
                 for (int col = 0; col < 8; col++) {
                     if (board.checkersBoard[row][col] == player || board.checkersBoard[row][col] == playerKing) {
-                        if (canMove(row,col,row+1,col+1))
+                        if (canMove(row,col,row+1,col+1)) {
                             moves.add(new Move(row,col,row+1,col+1));
-                        if (canMove(row,col,row-1,col+1))
+                            System.out.println(row);
+                            System.out.println(col);
+                            System.out.println(row+1);
+                            System.out.println(col+1);
+                            System.out.println();
+                        }
+                        if (canMove(row,col,row-1,col+1)) {
                             moves.add(new Move(row,col,row-1,col+1));
-                        if (canMove(row,col,row+1,col-1))
+                            System.out.println(row);
+                            System.out.println(col);
+                            System.out.println(row-1);
+                            System.out.println(col+1);
+                            System.out.println();
+                        }
+                        if (canMove(row,col,row+1,col-1)) {
                             moves.add(new Move(row,col,row+1,col-1));
-                        if (canMove(row,col,row-1,col-1))
+                            System.out.println(row);
+                            System.out.println(col);
+                            System.out.println(row+1);
+                            System.out.println(col-1);
+                            System.out.println();
+                        }
+                        if (canMove(row,col,row-1,col-1)) {
                             moves.add(new Move(row,col,row-1,col-1));
+                            System.out.println(row);
+                            System.out.println(col);
+                            System.out.println(row-1);
+                            System.out.println(col-1);
+                            System.out.println();
+                        }
                     }
                 }
             }
         }
 
 
+        if (moves.size() == 0) {
+
+            return null;
+        }
+        Move[] moveArray = new Move[moves.size()];
+        for (int i = 0; i < moves.size(); i++) {
+            moveArray[i] = moves.get(i);
+            System.out.println(moveArray[i].fromRow);
+            System.out.println(moveArray[i].fromCol);
+            System.out.println(moveArray[i].toRow);
+            System.out.println(moveArray[i].toCol);
+            System.out.println();
+            
+        }
+        return moveArray;
+
+    }
+	
+	Move[] getLegalJumpsFrom(State state, int fromRow, int fromCol) {
+		if (state.equals(board.gameOverState)) {
+			return null;
+		}
+		int player = state.getPlayer();
+        int playerKing= state.getPlayerKing();
+	        
+        ArrayList<Move> moves = new ArrayList<Move>();
+        if (board.checkersBoard[fromRow][fromCol] == player || board.checkersBoard[fromRow][fromCol] == playerKing) {
+        	 if (canJump(fromRow, fromCol, fromRow+1, fromCol+1, fromRow+2, fromCol+2))
+                 moves.add(new Move(fromRow, fromCol, fromRow+2, fromCol+2));
+             if (canJump(fromRow, fromCol, fromRow-1, fromCol+1, fromRow-2, fromCol+2))
+                 moves.add(new Move(fromRow, fromCol, fromRow-2, fromCol+2));
+             if (canJump(fromRow, fromCol, fromRow+1, fromCol-1, fromRow+2, fromCol-2))
+                 moves.add(new Move(fromRow, fromCol, fromRow+2, fromCol-2));
+             if (canJump(fromRow, fromCol, fromRow-1, fromCol-1, fromRow-2, fromCol-2))
+                 moves.add(new Move(fromRow, fromCol, fromRow-2, fromCol-2));
+        }
         if (moves.size() == 0)
             return null;
         else {
             Move[] moveArray = new Move[moves.size()];
-            for (int i = 0; i < moves.size(); i++)
+            for (int i = 0; i < moves.size(); i++) {
                 moveArray[i] = moves.get(i);
+
+            }
             return moveArray;
         }
-
     }
+	
 	 private boolean canJump(int r1, int c1, int r2, int c2, int r3, int c3) {
 
          if (r3 < 0 || r3 >= 8 || c3 < 0 || c3 >= 8)
@@ -77,14 +132,14 @@ public class MoveLegality {
              return false;
 
          if (board.state.equals(board.redTurnState)) {
-             if (board.checkersBoard[r1][c1] == CheckersData.RED && r3 > r1)
+             if (board.checkersBoard[r1][c1] == CheckersData.RED && r3 < r1)
                  return false; 
              if (board.checkersBoard[r2][c2] != CheckersData.BLACK && board.checkersBoard[r2][c2] != CheckersData.BLACK_PROMOTED)
                  return false;
              return true; 
          }
          else {
-             if (board.checkersBoard[r1][c1] == CheckersData.BLACK && r3 < r1)
+             if (board.checkersBoard[r1][c1] == CheckersData.BLACK && r3 > r1)
                  return false; 
              if (board.checkersBoard[r2][c2] != CheckersData.RED && board.checkersBoard[r2][c2] != CheckersData.RED_PROMOTED)
                  return false;
@@ -103,12 +158,12 @@ public class MoveLegality {
              return false; 
 
          if (board.state.equals(board.redTurnState)) {
-             if (board.checkersBoard[r1][c1] == CheckersData.RED && r2 > r1)
+             if (board.checkersBoard[r1][c1] == CheckersData.RED && r2 < r1)
                  return false; 
              return true; 
              }
          else {
-             if (board.checkersBoard[r1][c1] == CheckersData.BLACK && r2 < r1)
+             if (board.checkersBoard[r1][c1] == CheckersData.BLACK && r2 > r1)
                  return false;
              return true;
          }

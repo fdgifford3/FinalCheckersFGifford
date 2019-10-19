@@ -38,10 +38,8 @@ public class FinalCheckersFGifford extends JPanel {
         add(board.newGameButton);
         add(board.turnText);
 
-        /* Set the position and size of each component by calling
-         its setBounds() method. */
 
-        board.setBounds(20,20,492,492); // Note:  size MUST be 164-by-164 !
+        board.setBounds(20,20,492,492);
         board.newGameButton.setBounds(550, 120, 120, 50);
         board.turnText.setBounds(0, 520, 500, 30);
 	}

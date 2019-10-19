@@ -9,19 +9,26 @@ public class Board extends JPanel implements ActionListener, MouseListener {
 	JButton newGameButton;
     JLabel turnText;
     
+    MoveLegality moveLegality;
+    Move[] legalMoves;
 	CheckersData board;
-	int fromRow = -1, fromColumn = -1;
+
+	int selectedRow = -1, selectedCol = -1;
 	
 	public Board() {
+        board = CheckersData.getInstance();
+		moveLegality = new MoveLegality();
+
         setBackground(Color.BLACK);
         addMouseListener(this);
         newGameButton = new JButton("New Game");
         newGameButton.addActionListener(this);
         turnText = new JLabel("",JLabel.CENTER);
         turnText.setFont(new  Font("Arial", Font.BOLD, 18));
-        turnText.setForeground(Color.green);
-        board = CheckersData.getInstance();
+        turnText.setForeground(Color.black);
+
         turnText.setText(board.turnText);
+		legalMoves = moveLegality.getLegalMoves(board.getState());
 	}
 	
 	@Override
@@ -44,7 +51,13 @@ public class Board extends JPanel implements ActionListener, MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		int col = (arg0.getX() - 12) / 60;
+		System.out.println(arg0.getX());
+        int row = (arg0.getY() - 12) / 60;
+        System.out.println(arg0.getY());
+        if (col >= 0 && col < 8 && row >= 0 && row < 8)
+            clickSquare(row,col);
+
 
 	}
 
@@ -63,6 +76,79 @@ public class Board extends JPanel implements ActionListener, MouseListener {
         	repaint();
         }
 	}
+	
+	public void clickSquare(int row, int col) {
+		System.out.println(row);
+		System.out.println(col);
+		for (int i = 0; i < legalMoves.length; i++) {
+            }
+		
+		
+		
+        for (int i = 0; i < legalMoves.length; i++) {
+            if (legalMoves[i].fromRow == row && legalMoves[i].fromCol == col) {
+                selectedRow = row;
+                selectedCol = col;
+                repaint();
+                return;
+            }
+        }
+
+
+        for (int i = 0; i < legalMoves.length; i++) {
+            if (legalMoves[i].fromRow == selectedRow && legalMoves[i].fromCol == selectedCol
+            && legalMoves[i].toRow == row && legalMoves[i].toCol == col) {
+                doMakeMove(legalMoves[i]);
+                return;
+            }
+        }
+
+
+    } 
+
+
+    void doMakeMove(Move move) {
+
+        board.makeMove(move);
+
+        if (move.isJump()) {
+            legalMoves = moveLegality.getLegalJumpsFrom(board.getState(),move.toRow,move.toCol);
+            if (legalMoves != null) {
+
+                turnText.setText("You must continue jumping.");
+                selectedRow = move.toRow;  // Since only one piece can be moved, select it.
+                selectedCol = move.toCol;
+                repaint();
+                return;
+            }
+        }
+
+
+        if (board.getState().equals(board.getRedTurnState())) {
+        	board.getState().turnFinished();
+            legalMoves = moveLegality.getLegalMoves(board.getState());
+            if (legalMoves == null) {
+            	board.gameOver = true;
+            	board.getState().turnFinished();
+            	turnText.setText("Black has no moves. Game Over  Red wins.");
+            }
+        } else if(board.getState().equals(board.getBlackTurnState())) {
+        	board.getState().turnFinished();
+            legalMoves = moveLegality.getLegalMoves(board.getState());
+            if (legalMoves == null) {
+            	board.gameOver = true;
+            	board.getState().turnFinished();
+            	turnText.setText("Red has no moves. Game Over  Black wins.");
+            }
+        }
+
+        selectedRow = -1;
+
+
+        repaint();
+
+    }  
+	
 	public void paintComponent(Graphics g) {
 		
         g.setColor(Color.black);
@@ -89,13 +175,26 @@ public class Board extends JPanel implements ActionListener, MouseListener {
                     g.setColor(Color.RED);
                     g.fillOval(12 + j*60, 12 + i*60, 45, 45);
                     g.setColor(Color.WHITE);
-                    g.drawString("K", 21 + j*60, 48 + i*60);
+                    g.drawString("K", 30 + j*60, 40 + i*60);
             	} else if (board.getPiece(i,j) == CheckersData.BLACK_PROMOTED) {
                     g.setColor(Color.BLACK);
                     g.fillOval(12 + j*60, 12 + i*60, 45, 45);
                     g.setColor(Color.WHITE);
-                    g.drawString("K", 21 + j*60, 48 + i*60);
+                    g.drawString("K", 30 + j*60, 40 + i*60);
             	}
+            }
+        }
+        
+        if (selectedRow >= 0) {
+            g.setColor(Color.white);
+            g.drawRect(2 + selectedCol*60, 2 + selectedRow*60, 59, 59);
+            g.drawRect(3 + selectedCol*60, 3 + selectedRow*60, 57, 57);
+            g.setColor(Color.blue);
+            for (int i = 0; i < legalMoves.length; i++) {
+                if (legalMoves[i].fromCol == selectedCol && legalMoves[i].fromRow == selectedRow) {
+                    g.drawRect(2 + legalMoves[i].toCol*60, 2 + legalMoves[i].toRow*60, 59, 59);
+                    g.drawRect(3 + legalMoves[i].toCol*60, 3 + legalMoves[i].toRow*60, 57, 57);
+                }
             }
         }
     }

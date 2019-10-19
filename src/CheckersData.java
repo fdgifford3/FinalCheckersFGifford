@@ -2,7 +2,7 @@
 //A non Red/Black state to avoid running into issues
 
 //Also going to use Singleton on the CheckersData as this object will be used in multiple places but it has to be the only existing object
-import java.util.ArrayList;
+
 
 public class CheckersData {
 	private static CheckersData uniqueInstance = new CheckersData();
@@ -23,7 +23,7 @@ public class CheckersData {
 		redTurnState = new RedTurnState(this);
 		blackTurnState = new BlackTurnState(this);
 		gameOverState = new GameOverState(this);
-		
+		state = blackTurnState; //Black goes first
 	
 		
 		checkersBoard = new int[8][8];
@@ -47,9 +47,9 @@ public class CheckersData {
 				//So every square where row % 2 does not equal column % 2 is a legal square on our board
 				
 				//Rows 0,1,2 get Red and rows 5,6,7 get black. All other spaces start empty
-				if((i % 2 != j % 2) && (i < 3)) {
+				if((i % 2 == j % 2) && (i < 3)) {
 					checkersBoard[i][j] = CheckersData.RED;
-				} else if ((i % 2 != j % 2) && (i > 4)) {
+				} else if ((i % 2 == j % 2) && (i > 4)) {
 					checkersBoard[i][j] = CheckersData.BLACK;
 				} else {
 					checkersBoard[i][j] = CheckersData.EMPTY;
@@ -72,14 +72,14 @@ public class CheckersData {
 		
 		//if it was a jump, also remove piece that was jumped
 		if((fromRow - toRow > 1) || (fromRow - toRow < -1)) {
-			checkersBoard[(fromRow - toRow) / 2][(fromCol - toCol) / 2] = CheckersData.EMPTY;
+			checkersBoard[(fromRow + toRow) / 2][(fromCol + toCol) / 2] = CheckersData.EMPTY;
 		}
 		
 		//if red reached row 7 or black reached row 0, promote
-        if (toRow == 0 && checkersBoard[toRow][toCol] == CheckersData.RED)
-        	checkersBoard[toRow][toCol] = CheckersData.RED_PROMOTED;
-        if (toRow == 7 && checkersBoard[toRow][toCol] == CheckersData.BLACK)
+        if (toRow == 0 && checkersBoard[toRow][toCol] == CheckersData.BLACK)
         	checkersBoard[toRow][toCol] = CheckersData.BLACK_PROMOTED;
+        if (toRow == 7 && checkersBoard[toRow][toCol] == CheckersData.RED)
+        	checkersBoard[toRow][toCol] = CheckersData.RED_PROMOTED;
 	}
 	
 	
