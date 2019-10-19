@@ -16,7 +16,9 @@ public class MoveLegality {
 
         ArrayList<Move> moves = new ArrayList<Move>(); 
 
-        // Jumps are mandatory, so search for jumps first
+        // Jumps are mandatory according to my brief Google research of Checkers rules, so search for jumps first
+        // All moves checking goes in all four directions, upper left, upper right, lower left, and lower right
+        // Logic for whether or not the jump/move is allowed is delegated to methods below
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 if (board.checkersBoard[row][col] == player || board.checkersBoard[row][col] == playerKing) {
@@ -32,66 +34,46 @@ public class MoveLegality {
             }
         }
 
-
+        // This method could be adapted for rule changes to allow for jumps to be non-mandatory. Simple
+        // Check to see if moves list is empty is creating the mandatory jump rule here
         if (moves.size() == 0) {
             for (int row = 0; row < 8; row++) {
                 for (int col = 0; col < 8; col++) {
                     if (board.checkersBoard[row][col] == player || board.checkersBoard[row][col] == playerKing) {
                         if (canMove(row,col,row+1,col+1)) {
                             moves.add(new Move(row,col,row+1,col+1));
-                            System.out.println(row);
-                            System.out.println(col);
-                            System.out.println(row+1);
-                            System.out.println(col+1);
-                            System.out.println();
                         }
                         if (canMove(row,col,row-1,col+1)) {
                             moves.add(new Move(row,col,row-1,col+1));
-                            System.out.println(row);
-                            System.out.println(col);
-                            System.out.println(row-1);
-                            System.out.println(col+1);
-                            System.out.println();
                         }
                         if (canMove(row,col,row+1,col-1)) {
                             moves.add(new Move(row,col,row+1,col-1));
-                            System.out.println(row);
-                            System.out.println(col);
-                            System.out.println(row+1);
-                            System.out.println(col-1);
-                            System.out.println();
                         }
                         if (canMove(row,col,row-1,col-1)) {
                             moves.add(new Move(row,col,row-1,col-1));
-                            System.out.println(row);
-                            System.out.println(col);
-                            System.out.println(row-1);
-                            System.out.println(col-1);
-                            System.out.println();
                         }
                     }
                 }
             }
         }
 
+        //No legal moves means we return a null array and the game is over
 
         if (moves.size() == 0) {
 
             return null;
         }
+        
+        //If the moves list is not empty then we can add the arraylist of moves to a Move[] and send it back to the board
         Move[] moveArray = new Move[moves.size()];
         for (int i = 0; i < moves.size(); i++) {
             moveArray[i] = moves.get(i);
-            System.out.println(moveArray[i].fromRow);
-            System.out.println(moveArray[i].fromCol);
-            System.out.println(moveArray[i].toRow);
-            System.out.println(moveArray[i].toCol);
-            System.out.println();
             
         }
         return moveArray;
 
     }
+	
 	
 	Move[] getLegalJumpsFrom(State state, int fromRow, int fromCol) {
 		if (state.equals(board.gameOverState)) {
@@ -123,6 +105,8 @@ public class MoveLegality {
         }
     }
 	
+	//Need to keep track of the from row, to row, and the row being jumped in the case of a jump, can't jump same color piece
+	//Only kings can move bi-directionally, can only move into empty spaces
 	 private boolean canJump(int r1, int c1, int r2, int c2, int r3, int c3) {
 
          if (r3 < 0 || r3 >= 8 || c3 < 0 || c3 >= 8)
@@ -148,7 +132,7 @@ public class MoveLegality {
 
      }
 
-
+	//Only kings can move bi-directionally, can only move into empty spaces
      private boolean canMove(int r1, int c1, int r2, int c2) {
 
          if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8)

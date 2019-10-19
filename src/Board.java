@@ -188,13 +188,11 @@ public class Board extends JPanel implements ActionListener, MouseListener {
         
         if (selectedRow >= 0) {
             g.setColor(Color.white);
-            g.drawRect(2 + selectedCol*60, 2 + selectedRow*60, 59, 59);
-            g.drawRect(3 + selectedCol*60, 3 + selectedRow*60, 57, 57);
+            g.drawRect(4 + selectedCol*60, 4 + selectedRow*60, 60, 60);
             g.setColor(Color.blue);
             for (int i = 0; i < legalMoves.length; i++) {
                 if (legalMoves[i].fromCol == selectedCol && legalMoves[i].fromRow == selectedRow) {
-                    g.drawRect(2 + legalMoves[i].toCol*60, 2 + legalMoves[i].toRow*60, 59, 59);
-                    g.drawRect(3 + legalMoves[i].toCol*60, 3 + legalMoves[i].toRow*60, 57, 57);
+                    g.drawRect(4 + legalMoves[i].toCol*60, 4 + legalMoves[i].toRow*60, 60, 60);
                 }
             }
         }
