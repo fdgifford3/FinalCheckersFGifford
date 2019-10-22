@@ -150,7 +150,7 @@ public class Board extends JPanel implements ActionListener, MouseListener {
     }  
 	
 	public void paintComponent(Graphics g) {
-		
+		super.paintComponent(g); //Suggested by Stephen to fix graphical glitch
         g.setColor(Color.black);
         g.drawRect(0, 0, getWidth()-1, getHeight()-1);
         g.drawRect(1,1,getSize().width-2,getSize().height-2);

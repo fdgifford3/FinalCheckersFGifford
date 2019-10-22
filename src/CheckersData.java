@@ -5,7 +5,7 @@
 
 
 public class CheckersData {
-	private static CheckersData uniqueInstance = new CheckersData();
+	private static CheckersData uniqueInstance;// = new CheckersData();
 	
 	Boolean gameOver;
 	int[][] checkersBoard;
@@ -30,9 +30,12 @@ public class CheckersData {
 		placePieces();
 	}
 	
-	public static CheckersData getInstance(){
-		return uniqueInstance;
-	}
+	public static synchronized CheckersData getInstance() {
+		   if (uniqueInstance == null) {
+		      uniqueInstance = new CheckersData();    
+		   }
+		   return uniqueInstance;
+		}
 	
 	public void placePieces() {
 		state = blackTurnState; //Black goes first
